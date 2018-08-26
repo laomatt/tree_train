@@ -1,3 +1,5 @@
+require 'set'
+
 class StationsController < ApplicationController
   before_action :set_station, only: [:show, :edit, :update, :destroy]
   include RoutesHelper
@@ -46,6 +48,14 @@ class StationsController < ApplicationController
       return
     end
 
+    # find the origin
+    origin = Station.find_by_name(params[:origin])
+
+    if origin.nil?
+      render status: 404, body: { error: 'Origin not found' }.to_json
+      return
+    end
+
     if params[:maximum].blank?
       render status: 422, body: { error: 'You are missing the maximum parameter' }.to_json
       return
@@ -56,10 +66,16 @@ class StationsController < ApplicationController
       return
     end
 
+
+    # TODO: memorize exact stops
+    valid_paths_so_far = Set.new
+
     max = params[:maximum].to_i
     type_of_query = params[:type]
 
-    traverse = ->(station,dist,visited) do 
+    # maybe we can load up all concerning rows from the DB in one data swoop
+
+    traverse = ->(station,dist,visited) do
       case type_of_query
       when 'max_dist'
         return if dist >= max
@@ -69,16 +85,20 @@ class StationsController < ApplicationController
         return if visited.length > max 
       end
 
-      if station == destination
+      valid_paths_so_far.add visited
+
+      if station == destination && visited.last != origin
         case type_of_query
         when 'max_stops'
           if visited.length > 0
+            visited << station
             routes << visited
             trips += 1
-            return
+            # no return statement here because we want to keep going until we over shoot the max
           end
         when 'exact_stops'
           if visited.length == max
+            visited << station
             routes << visited
             trips += 1
             return
@@ -110,18 +130,11 @@ class StationsController < ApplicationController
             dest,
             nil,
             visited.clone
-          )
+          ) #if !visited[1..-1].include?(dest)
         end
       end
     end
 
-    # find the origin
-    origin = Station.find_by_name(params[:origin])
-
-    if origin.nil?
-      render status: 404, body: { error: 'Origin not found' }.to_json
-      return
-    end
 
     traverse.call(origin, 0, [])
 
