@@ -48,6 +48,11 @@ class StationsController < ApplicationController
       return
     end
 
+    if !['max_dist','max_stops','exact_stops'].include? params[:type]
+      render status: 422, body: { error: 'That is not a valid query type' }.to_json
+      return
+    end
+
     max = params[:maximum].to_i
     type_of_query = params[:type]
 
@@ -59,9 +64,6 @@ class StationsController < ApplicationController
         return if visited.length > max 
       when 'exact_stops'
         return if visited.length > max 
-      else
-        render status: 422, body: { error: 'That is not a valid query type' }.to_json
-        return
       end
 
       if station == destination

@@ -36,9 +36,9 @@ class StationsControllerTest < ActionDispatch::IntegrationTest
       { origin: 'C', destination: nil, maximum: 30, type: 'max_dist', error: 'Destination not found', status: 404 },
       { origin: 'C', destination: 'C', maximum: '', type: 'max_dist', error: 'You are missing the maximum parameter', status: 422 },
       { origin: 'C', destination: 'C', maximum: nil, type: 'max_dist', error: 'You are missing the maximum parameter', status: 422 },
-      { origin: 'C', destination: 'C', maximum: nil, type: 'max_runs', error: 'That is not a valid query type', status: 422 },
-      { origin: 'X', destination: 'C', maximum: nil, type: 'max_runs', error: 'Origin not found', status: 404 },
-      { origin: 'C', destination: 'X', maximum: nil, type: 'max_runs', error: 'Destination not found', status: 404 }
+      { origin: 'C', destination: 'C', maximum: 2, type: 'max_runs', error: 'That is not a valid query type', status: 422 },
+      { origin: 'X', destination: 'C', maximum: 4, type: 'max_dist', error: 'Origin not found', status: 404 },
+      { origin: 'C', destination: 'X', maximum: 5, type: 'max_dist', error: 'Destination not found', status: 404 }
     ]
 
     test_cases.each do |t|
