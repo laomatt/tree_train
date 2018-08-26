@@ -28,9 +28,24 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get the distance of a given route" do 
-    get find_route_distance_routes_url, params: { stations: [@station_a.id, @station_b.id, @station_c.id]}
-    assert_response :success
-    assert_equal(9, JSON.parse(response.body)["distance"], "Distance A-B-C is wrong")
+
+    cases = {
+        ['A','B','C'] => { answer: 9, status: 200 },
+        ['A','D'] => { answer: 5, status: 200 },
+        ['A','D','C'] => { answer: 13, status: 200 },
+        ['A','E','B','C','D'] => { answer: 22, status: 200 },
+        ['A','E','D'] => {error: 'No Such Route', status: 404 }
+    }
+
+    cases.each do |path, answers|
+      get find_route_distance_routes_url, params: { stations: path.map { |e| Station.find_by_name(e).id }}
+      assert_response answers[:status]
+      if answers[:status] == 200
+        assert_equal(answers[:answer], JSON.parse(response.body)["distance"].to_i, "Distance of #{path} is wrong")
+      else
+        assert_equal(answers[:error], JSON.parse(response.body)["error"], "error message is wrong")
+      end
+    end
   end
 
   test "should give a 404 error if the route doesn't exist" do 
@@ -38,6 +53,10 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
     assert_equal("No Such Route", JSON.parse(response.body)["error"], "error message is wrong")
 
+  end
+
+  test "should find the shortest route" do 
+    get find_shortest_route_routes_url, params: {}
   end
 
   # test "should get index" do

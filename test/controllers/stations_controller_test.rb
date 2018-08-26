@@ -25,8 +25,18 @@ class StationsControllerTest < ActionDispatch::IntegrationTest
     Route.create({origin: @station_a, destination: @station_e, distance: 7})
   end
 
-  test 'station_find_trips_with_max_distance' do 
-    # station_find_trips_with_max_distance_url, params {origin: }
+  test 'find round trips' do 
+    test_cases = [
+      {origin: 'C', destination: 'C', max: 3, answer: 2, status: 200}
+    ]
+
+    test_cases.each do |t|
+      find_trips_with_max_stops_stations_url, params {origin: t[:origin, destination: t[:destination], max_stops: t[:max] }
+
+      assert_response t[:status]
+      assert_equal(t[:answer], JSON.parse(response.body)["num_trips"].to_i, "number of trips for #{t[:origin]} to #{t[:destination]} is wrong")
+
+    end
   end
 
 

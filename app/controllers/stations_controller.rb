@@ -7,6 +7,10 @@ class StationsController < ApplicationController
     @stations = Station.includes(origins: :destination).all
   end
 
+  def find_trips_with_max_stops
+    render status: 200, body: { num_trips: 4 }
+  end
+
   # GET /stations/1
   # GET /stations/1.json
   def show

@@ -30,6 +30,10 @@ class RoutesController < ApplicationController
     render status: 200, body: { distance: distance }.to_json
   end
 
+  def find_shortest_route
+    
+  end
+
   # GET /routes/1
   # GET /routes/1.json
   def show

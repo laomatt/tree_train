@@ -7,8 +7,9 @@ Rails.application.routes.draw do
   end
   
   resources :stations do 
-  	get 'find_trips_with_max_distance'
-  	get 'find_round_trips_with_max_distance'
+    collection do 
+      get 'find_trips_with_max_stops'
+    end
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
