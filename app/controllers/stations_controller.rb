@@ -44,7 +44,7 @@ class StationsController < ApplicationController
     end
 
     if params[:maximum].blank?
-      render status: 404, body: { error: 'You are missing the maximum parameter' }.to_json
+      render status: 422, body: { error: 'You are missing the maximum parameter' }.to_json
       return
     end
 
@@ -60,7 +60,7 @@ class StationsController < ApplicationController
       when 'exact_stops'
         return if visited.length > max 
       else
-        render status: 404, body: { error: 'That is not a valid query type' }.to_json
+        render status: 422, body: { error: 'That is not a valid query type' }.to_json
         return
       end
 
