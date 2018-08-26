@@ -10,6 +10,7 @@
       <li><a href="#" id='addStation' data-toggle="stations-list">All Stations</a></li>
       <li><a href="#" id='addStation' data-toggle="tab-route-dist">Route Distances</a></li>
       <li><a href="#" id='addRoute' data-toggle="tab-number-route">Number of Routes</a></li>
+      <li><a href="#" id='shortRoute' data-toggle="tab-short-route">Shortest Route</a></li>
       <li><a href="#" id='addRouteStations' data-toggle="tab-input">Input station and Routes</a></li>
     </ul>
 
@@ -43,7 +44,7 @@
           <div class="container">
             <div class="row justify-content-center">
               <div class="col-12 col-sm-8 col-lg-5">
-                <form>
+                <form action="<%= find_trips_with_stops_stations_url %>">
                   <div>
                     <input class="form-control form-control-light mb-20" name="origin" type="text" placeholder="Enter route origin"/>
                   </div>
@@ -61,10 +62,10 @@
                   </div>
 
                   <div>
-                    <input class="form-control form-control-light mb-20" name="maximum" type="text" placeholder=""/>
+                    <input class="form-control form-control-light mb-20" name="maximum" type="number" placeholder=""/>
                   </div>
 
-                  <button class="btn w-full no-padding"><span>Find Routes</span>
+                  <button class="btn w-full no-padding" appendage="routes"><span>Find Routes</span>
                   </button>
                 </form>
 
@@ -75,7 +76,33 @@
         </section>
 
       </div>
+    
+      <!-- SHORT ROUTES -->
+      <div class="tab-panel" id="tab-short-route">
+        <section class="forms text-center p-60 p-lg-100">
+          <h2 style="margin-bottom: 10px">Find shortest route from an Origin to a Destination</h2>
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-12 col-sm-8 col-lg-5">
+                <form action="<%= find_shortest_route_routes_url %>">
+                  <div>
+                    <input class="form-control form-control-light mb-20" name="origin" type="text" placeholder="Enter route origin"/>
+                  </div>
+                  <div>
+                    <input class="form-control form-control-light mb-20" name="destination" type="text" placeholder="Enter route destination"/>
+                  </div>
+                  <button class="btn w-full no-padding" appendage="units of distance"><span>Find Route</span>
+                  </button>
+                </form>
 
+                <div class="answer"></div>
+                <div class="route"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
 
       <!-- INPUT STRING -->
       <div class="tab-panel" id="tab-input">
@@ -128,8 +155,12 @@
     </div>
     </div>
     <script>
+
+
+      // todo: make option for a second page instead of a SPA
+
       $("#type-selection").change(function(event) {
-        var holdText;
+        var holdText = "make a selection ^";
         if ($(this).val() == 'max_stops') {
           holdText = "Enter maximum stops..."
         } else if ($(this).val() == 'max_dist') {
@@ -161,15 +192,20 @@
         })
         .done(function(data) {
           console.log("success");
-          var dist = JSON.parse(data).answer;
+          var ans = JSON.parse(data).answer;
           $(that).parent('form').parent('.col-12').find('.answer').css('color', 'green');
-          $(that).parent('form').parent('.col-12').find('.answer').text(dist + ' ' + $(that).attr('appendage'))
+          $(that).parent('form').parent('.col-12').find('.answer').text(ans + ' ' + $(that).attr('appendage'));
+          var route = JSON.parse(data).route;
+          if (route != undefined) {
+            $(that).parent('form').parent('.col-12').find('.route').text(route);
+          }
         })
         .fail(function($xhr) {
           console.log("error");
           var err = JSON.parse($xhr.responseText).error;
           $(that).parent('form').parent('.col-12').find('.answer').css('color', 'red');
           $(that).parent('form').parent('.col-12').find('.answer').text(err)
+          $(that).parent('form').parent('.col-12').find('.route').text('');
         })
         .always(function(data) {
           $(that).parent('form').slideDown(500);

@@ -2,9 +2,6 @@ require 'test_helper'
 
 class StationsControllerTest < ActionDispatch::IntegrationTest
 
-  setup do
-  end
-
   test 'find round trips' do 
     test_cases = [
       { origin: 'C', destination: 'C', maximum: 3, type: 'max_stops', answer: 2, status: 200 },

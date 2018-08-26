@@ -2,10 +2,6 @@ require 'test_helper'
 require 'byebug'
 
 class RoutesControllerTest < ActionDispatch::IntegrationTest
-  
-  
-  setup do
-  end
 
   test "should get the distance of a given route" do 
 
@@ -44,17 +40,23 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
   test "find shortest route" do 
     cases = [
       {origin: 'A', destination: 'C', answer: 9, status: 200},
-      {origin: 'B', destination: 'B', answer: 9, status: 200}
+      {origin: 'B', destination: 'B', answer: 9, status: 200},
+      {origin: '', destination: 'B', error: 'Origin not found', status: 404},
+      {origin: 'B', destination: '', error: 'Destination not found', status: 404}
     ]
 
     # TODO: check of no route exists
 
     cases.each do |test_case|
       get find_shortest_route_routes_url, params: test_case.slice(:origin, :destination)
-
       assert_response test_case[:status]
 
-      assert_equal(test_case[:answer], JSON.parse(response.body)['answer'].to_i, "distace wrong for #{test_case[:origin]} to #{test_case[:destination]}")
+      if test_case[:status] == 200
+        assert_equal(test_case[:answer], JSON.parse(response.body)['answer'].to_i, "distace wrong for #{test_case[:origin]} to #{test_case[:destination]}")
+      else
+        assert_equal(test_case[:error], JSON.parse(response.body)['error'].to_i, "error wrong for #{test_case[:origin]} to #{test_case[:destination]}")
+        
+      end
     end
   end
 

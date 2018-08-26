@@ -52,6 +52,7 @@ class RoutesController < ApplicationController
     origin = Station.find_by_name(params[:origin])
     destination = Station.find_by_name(params[:destination])
     distances = []
+    paths = []
     
     traverse = ->(station, travel_distance, visited) do 
       visited << station
@@ -61,6 +62,8 @@ class RoutesController < ApplicationController
         new_travel_distance += st.distance.to_i
 
         if st.destination == destination
+          visited << st.destination
+          paths << visited
           distances << new_travel_distance if new_travel_distance > 0
           return
         end
@@ -86,7 +89,9 @@ class RoutesController < ApplicationController
       return
     end
 
-    render status: 200, body: { answer: distances.min }.to_json
+    answer = paths.min_by(&:length).map(&:name)
+
+    render status: 200, body: { answer: distances.min , route: answer.join(' -> ') }.to_json
   end
 
   # GET /routes/1

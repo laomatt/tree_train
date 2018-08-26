@@ -32,6 +32,8 @@ class StationsController < ApplicationController
       end
 
     end
+
+    render status: 302, location: root_url
   end
 
   def find_trips_with_stops
