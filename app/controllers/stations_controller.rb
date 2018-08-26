@@ -38,12 +38,20 @@ class StationsController < ApplicationController
     trips = 0
     destination = Station.find_by_name(params[:destination])
 
-    max = params[:maximum].to_i
+    if destination.nil?
+      render status: 404, body: { error: 'Destination not found' }.to_json
+      return
+    end
 
+    if params[:maximum].blank?
+      render status: 404, body: { error: 'You are missing the maximum parameter' }.to_json
+      return
+    end
+
+    max = params[:maximum].to_i
     type_of_query = params[:type]
 
     traverse = ->(station,dist,visited) do 
-
       case type_of_query
       when 'max_dist'
         return if dist >= max
@@ -51,6 +59,9 @@ class StationsController < ApplicationController
         return if visited.length > max 
       when 'exact_stops'
         return if visited.length > max 
+      else
+        render status: 404, body: { error: 'That is not a valid query type' }.to_json
+        return
       end
 
       if station == destination
@@ -70,7 +81,7 @@ class StationsController < ApplicationController
             visited_cl = visited.clone
             visited_cl << station
             trips += 1
-            # no return statment here, since circular paths are allowed
+            # no return statment here, since circular paths are allowed but limited to the max distance
           end
         end
       end
@@ -78,7 +89,6 @@ class StationsController < ApplicationController
       visited << station
 
       if type_of_query == 'max_dist'
-        # p station.origins.includes(:destination).map { |e| e.destination }
         station.origins.includes(:destination).each do |dest|
           traverse.call(
             dest.destination,
@@ -99,6 +109,12 @@ class StationsController < ApplicationController
 
     # find the origin
     origin = Station.find_by_name(params[:origin])
+
+    if origin.nil?
+      render status: 404, body: { error: 'Origin not found' }.to_json
+      return
+    end
+
     traverse.call(origin, 0, [])
 
     render status: 200, body: { answer: trips }.to_json
