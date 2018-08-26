@@ -1,11 +1,47 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  origin_id: 1
-  destination_id: 1
-  distance: 1
+  origin: A
+  destination: B
+  distance: 5
 
 two:
-  origin_id: 1
-  destination_id: 1
-  distance: 1
+  origin: B
+  destination: C
+  distance: 4
+
+three:
+  origin: C
+  destination: D
+  distance: 8
+
+four:
+  origin: D
+  destination: C
+  distance: 8
+
+five:
+  origin: D
+  destination: E
+  distance: 6
+
+six:
+  origin: A
+  destination: D
+  distance: 5
+
+seven:
+  origin: C
+  destination: E
+  distance: 2
+
+eight:
+  origin: E
+  destination: B
+  distance: 3
+
+nine:
+  origin: A
+  destination: E
+  distance: 7
+

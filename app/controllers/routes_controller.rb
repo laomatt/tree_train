@@ -16,8 +16,18 @@ class RoutesController < ApplicationController
       stations = params["stations"]
     end
 
+    if stations.nil? || stations.empty?
+      render status: 422, body: { error: 'A Route is Required' }.to_json
+      return
+    end
+
     stations.each do |station_name|
       next_station = Station.find_by_name(station_name)
+
+      if next_station.nil?
+        render status: :not_found, body: { error: 'No Such Route' }.to_json
+        return
+      end
 
       if last_station
         if last_station.destinations.include? next_station
@@ -73,7 +83,6 @@ class RoutesController < ApplicationController
     if distances.empty?
       render status: 404, body: { error: "there are no trips from #{origin.name} ro #{destination.name}" }.to_json
       return
-      
     end
 
     render status: 200, body: { answer: distances.min }.to_json
