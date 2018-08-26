@@ -55,9 +55,9 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
 
   end
 
-  test "should find the shortest route" do 
-    get find_shortest_route_routes_url, params: {}
-  end
+  # test "should find the shortest route" do 
+  #   get find_shortest_route_routes_url, params: {}
+  # end
 
   # test "should get index" do
   #   get routes_url

@@ -8,7 +8,29 @@ class StationsController < ApplicationController
   end
 
   def find_trips_with_max_stops
-    render status: 200, body: { num_trips: 4 }
+    trips = 0
+    destination = Station.find_by_name(params[:destination])
+    max = params[:max_stops].to_i
+    traverse = ->(station,stops) do 
+      return if stops > max
+
+      if (stops > 0) && (station == destination)
+        trips += 1
+        return
+      end
+
+      # find all the destinations
+      stops += 1
+      station.destinations.each do |dest|
+        traverse.call(dest,stops.clone)
+      end
+    end
+
+    # find the origin
+    origin = Station.find_by_name(params[:origin])
+    traverse.call(origin, 0)
+
+    render status: 200, body: { num_trips: trips }.to_json
   end
 
   # GET /stations/1
