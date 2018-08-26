@@ -1,27 +1,110 @@
-<p id="notice"><%= notice %></p>
+<!DOCTYPE html>
 
-<h1>Stations</h1>
+  <body>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <% @stations.each do |station| %>
-      <tr>
-        <td><%= station.name %></td>
-        <td><%= link_to 'Show', station %></td>
-        <td><%= link_to 'Edit', edit_station_path(station) %></td>
-        <td><%= link_to 'Destroy', station, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<section class="ecommerces p-60 p-lg-100 text-center" id="ecommerces-1">
+  <div class="container">
+    <h1>Current Stations</h1>
+    <ul class="nav-tabs mb-40" id="ecommerces-tabs">
+      <li><a href="#" id='addStation' data-toggle="tab">+ Station</a></li>
+      <li><a href="#" id='addRoute' data-toggle="tab">+ Route</a></li>
+      <li><a href="#" id='addRouteStations' data-toggle="tab">Input station and Routes</a></li>
+      <li><a href="#" id='clearData' data-toggle="tab">Clear Data</a></li>
+    </ul>
+    <div class="tabs-content mb-30" id="ecommerces-1-tabs">
+      <div class="tab-panel active" id="ecommerce-1-tab-0">
+        <% @stations.each do |station| %>
+        <!-- Station item -->
+            <div class="panel h-400 with-overlay p-30 d-flex justify-content-center">
+              <div class="align-self-end">
+                <h3>Name: <b><%= station.name %></b></h3>
+                <p>$238</p>
+              </div>
+              <div class="with-overlay__content d-flex justify-content-center">
+                <div class="align-self-center ph-30">
+                  <h3 class="mb-10">Current routes for station <b><%= station.name %></b></h3>
+                  <% station.origins.each do |d| %>
+                    <div class="row">
+                      <b> <%= d.destination.name %> </b>:  <%= d.distance  %> miles
+                      
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+        <% end %>
+      </div>
+    </div>
+    </div>
+    <script>
+      $('#ecommerces-1-tabs a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+      })
 
-<br>
 
-<%= link_to 'New Station', new_station_path %>
+    </script>
+  </div>
+</section>
+
+<section class="forms text-center p-60 p-lg-100" id="forms-9" style="display: none;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-8 col-lg-5">
+        <h1 class="mb-15">Sign Up</h1>
+        <h4 class="mb-40">A small river named Duden flows by their place and supplies it with the necessary regelialia</h4>
+        <form>
+          <div>
+            <input class="form-control form-control-light mb-20" type="text" placeholder="Input with icon"/><span class="glyphicon glyphicon-eye-open form-control-feedback"></span>
+          </div>
+          <div>
+            <input class="form-control form-control-light mb-20" type="text" placeholder="Input with icon"/>
+          </div>
+          <button class="btn w-full no-padding"><span>Button</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="footers text-center text-sm-left" id="footers-11">
+  <div class="p-40 ph-15 ph-sm-30 ph-lg-70">
+    <div class="row justify-content-between align-items-center">
+      <div class="col-12 col-lg-auto mb-20 mb-lg-0">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-auto mb-20 mb-sm-0">
+            <div class="navbar-header"><a href=""></a></div>
+          </div>
+          <div class="col-auto">
+            <p>&copy; 2016 Great Simple All rights reserves</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-auto">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-12 col-sm-auto mb-20 mb-sm-0">
+            <p>+39 02 367 409 12, 560 Mission St, San Francisco CA 94105, USA</p>
+          </div>
+          <div class="col-auto">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>  
+
+</body>
+
+
+<style>
+  .h-400 {
+    height: 100px;
+    /*width: 50%;*/
+  }
+
+  .tabs-content > .tab-panel.active {
+    /*display: inline-block;*/
+}
+</style>

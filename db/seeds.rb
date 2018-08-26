@@ -29,14 +29,4 @@ Route.create({origin: c, destination: e, distance: 2})
 Route.create({origin: e, destination: b, distance: 3})
 Route.create({origin: a, destination: e, distance: 7})
 
-# test_input = [
-# 	['A','B',5], 
-# 	['B','C',4], 
-# 	['C','D',8], 
-# 	['D','C',8], 
-# 	['D','E',6], 
-# 	['A','D',5], 
-# 	['C','E',2], 
-# 	['E','B',3], 
-# 	['A','E',7]
-# ]
+
