@@ -37,8 +37,8 @@ class StationsController < ApplicationController
   def find_trips_with_stops
     trips = 0
     destination = Station.find_by_name(params[:destination])
-    max = params[:stops].to_i
-    max_dist = params[:max_dist].to_i
+
+    max = params[:maximum].to_i
 
     type_of_query = params[:type]
 
@@ -46,7 +46,7 @@ class StationsController < ApplicationController
 
       case type_of_query
       when 'max_dist'
-        return if dist >= max_dist
+        return if dist >= max
       when 'max_stops'
         return if visited.length > max 
       when 'exact_stops'
@@ -66,7 +66,7 @@ class StationsController < ApplicationController
             return
           end
         when 'max_dist'
-          if dist < max_dist && dist > 0
+          if dist < max && dist > 0
             visited_cl = visited.clone
             visited_cl << station
             trips += 1
@@ -84,7 +84,7 @@ class StationsController < ApplicationController
             dest.destination,
             dist.clone+dest.distance,
             visited.clone
-          ) #if !visited.include? dest.destination
+          ) 
         end
       else
         station.destinations.each do |dest|
@@ -101,7 +101,7 @@ class StationsController < ApplicationController
     origin = Station.find_by_name(params[:origin])
     traverse.call(origin, 0, [])
 
-    render status: 200, body: { num_trips: trips }.to_json
+    render status: 200, body: { answer: trips }.to_json
   end
 
   # GET /stations/1

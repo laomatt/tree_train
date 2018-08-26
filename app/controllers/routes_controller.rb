@@ -32,7 +32,7 @@ class RoutesController < ApplicationController
       last_station = next_station
     end
 
-    render status: 200, body: { distance: distance }.to_json
+    render status: 200, body: { answer: distance }.to_json
   end
 
   def find_shortest_route
@@ -76,7 +76,7 @@ class RoutesController < ApplicationController
       
     end
 
-    render status: 200, body: { distance: distances.min }.to_json
+    render status: 200, body: { answer: distances.min }.to_json
   end
 
   # GET /routes/1

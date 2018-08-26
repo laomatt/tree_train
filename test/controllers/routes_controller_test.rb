@@ -29,28 +29,28 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
 
   test "should get the distance of a given route" do 
 
-    cases = {
-        ['A','B','C'] => { answer: 9, status: 200 },
-        ['A','D'] => { answer: 5, status: 200 },
-        ['A','D','C'] => { answer: 13, status: 200 },
-        ['A','E','B','C','D'] => { answer: 22, status: 200 },
-        ['A','E','D'] => {error: 'No Such Route', status: 404 },
-        'A-B-C' => { answer: 9, status: 200 },
-        'A-D' => { answer: 5, status: 200 },
-        'A-D-C' => { answer: 13, status: 200 },
-        'A-E-B-C-D' => { answer: 22, status: 200 },
-        'A-E-D' => {error: 'No Such Route', status: 404 }
-    }
+    cases = [
+        { route: ['A','B','C'], answer: 9, status: 200 },
+        { route: ['A','D'], answer: 5, status: 200 },
+        { route: ['A','D','C'], answer: 13, status: 200 },
+        { route: ['A','E','B','C','D'], answer: 22, status: 200 },
+        { route: ['A','E','D'], error: 'No Such Route', status: 404 },
+        { route: 'A-B-C', answer: 9, status: 200 },
+        { route: 'A-D', answer: 5, status: 200 },
+        { route: 'A-D-C', answer: 13, status: 200 },
+        { route: 'A-E-B-C-D', answer: 22, status: 200 },
+        { route: 'A-E-D', error: 'No Such Route', status: 404 }
+    ]
 
-    cases.each do |path, answers|
-      get find_route_distance_routes_url, params: { stations: path }
+    cases.each do |test_case|
+      get find_route_distance_routes_url, params: { stations: test_case[:route] }
 
-      assert_response answers[:status]
+      assert_response test_case[:status]
 
-      if answers[:status] == 200
-        assert_equal(answers[:answer], JSON.parse(response.body)["distance"].to_i, "Distance of #{path} is wrong")
+      if test_case[:status] == 200
+        assert_equal(test_case[:answer], JSON.parse(response.body)["answer"].to_i, "Distance of #{path} is wrong")
       else
-        assert_equal(answers[:error], JSON.parse(response.body)["error"], "error message is wrong")
+        assert_equal(test_case[:error], JSON.parse(response.body)["error"], "error message is wrong")
       end
     end
   end
@@ -66,7 +66,7 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
 
       assert_response test_case[:status]
 
-      assert_equal(test_case[:answer], JSON.parse(response.body)['distance'].to_i, "distace wrong for #{test_case[:origin]} to #{test_case[:destination]}")
+      assert_equal(test_case[:answer], JSON.parse(response.body)['answer'].to_i, "distace wrong for #{test_case[:origin]} to #{test_case[:destination]}")
     end
   end
 

@@ -29,9 +29,7 @@
                   <button class="btn w-full no-padding" appendage='is the total distance.'><span>Calculate total distance</span></button>
                 </form>
 
-                <div class="answer">
-                  answer here
-                </div>
+                <div class="answer"></div>
               </div>
             </div>
           </div>
@@ -41,7 +39,7 @@
     <!-- FIND ROUTES -->
       <div class="tab-panel" id="tab-number-route">
         <section class="forms text-center p-60 p-lg-100">
-          <h2 style="margin-bottom: 10px">Find the distance of a given route</h2>
+          <h2 style="margin-bottom: 10px">Find Number of routes from an Origin to a Destination</h2>
           <div class="container">
             <div class="row justify-content-center">
               <div class="col-12 col-sm-8 col-lg-5">
@@ -61,9 +59,15 @@
                     </select>
                   </div>
 
+                  <div>
+                    <input class="form-control form-control-light mb-20" name="max" type="text" placeholder="Enter maximum stops"/>
+                  </div>
+
                   <button class="btn w-full no-padding"><span>Find Routes</span>
                   </button>
                 </form>
+
+                <div class="answer"></div>
               </div>
             </div>
           </div>
@@ -142,7 +146,7 @@
         })
         .done(function(data) {
           console.log("success");
-          var dist = JSON.parse(data).distance;
+          var dist = JSON.parse(data).answer;
           $(that).parent('form').parent('.col-12').find('.answer').css('color', 'green');
           $(that).parent('form').parent('.col-12').find('.answer').text(dist + ' ' + $(that).attr('appendage'))
         })
