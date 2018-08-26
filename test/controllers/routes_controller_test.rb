@@ -64,10 +64,10 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
     ]
 
     cases.each do |test_case|
-      get find_shortest_route_routes_url, params test_case.splice(:origin, :destination)
+      get find_shortest_route_routes_url, params: test_case.slice(:origin, :destination)
 
       assert_response test_case[:status]
-      assert_equal(test_case[:answer], JSON.parse(response.body)['distance'])
+      assert_equal(test_case[:answer], JSON.parse(response.body)['distance'], "distace wrong for #{test_case[:origin]} to #{test_case[:destination]}")
     end
   end
 
