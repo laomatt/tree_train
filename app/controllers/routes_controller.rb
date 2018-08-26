@@ -8,7 +8,26 @@ class RoutesController < ApplicationController
   end
 
   def find_route_distance
- 
+    last_station = nil
+    distance = 0
+
+    params["stations"].each do |station_id|
+      next_station = Station.find(station_id.to_i)
+
+      if last_station
+        if last_station.destinations.include? next_station
+          distance += last_station.origins.select { |e| e.destination_id == station_id.to_i }.first.distance
+        else
+          render status: :not_found, body: { error: 'No Such Route' }.to_json
+          return
+        end
+      end
+
+      # assign the last_station
+      last_station = next_station
+    end
+
+    render status: 200, body: { distance: distance }.to_json
   end
 
   # GET /routes/1
