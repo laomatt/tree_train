@@ -1,6 +1,6 @@
 class StationsController < ApplicationController
   before_action :set_station, only: [:show, :edit, :update, :destroy]
-
+  include RoutesHelper
   # GET /stations
   # GET /stations.json
   def index
@@ -10,14 +10,14 @@ class StationsController < ApplicationController
   def parse_string_into_stations_and_routes
     str = params[:string]
 
-    str.split(' ').each do |s|
-      if Station.exists(name: s[0])
+    str.split(',').map { |e| e.strip }.each do |s|
+      if Station.exists?(name: s[0])
         origin = Station.find_by_name(s[0])
       else
         origin = Station.create(name: s[0])
       end
 
-      if Station.exists(name: s[1])
+      if Station.exists?(name: s[1])
         destination = Station.find_by_name(s[1])
       else
         destination = Station.create(name: s[1])
@@ -26,19 +26,20 @@ class StationsController < ApplicationController
       route = Route.where("origin_id = ? and destination_id = ?", origin.id, destination.id).first
 
       if route
-        route.update_attributes(distance: s[2])
+        route.update_attributes(distance: s[2..-1].to_i)
       else
-        route = Route.create(origin: origin, destination: destination, distance: s[2])
+        route = Route.create(origin: origin, destination: destination, distance: s[2..-1].to_i)
       end
 
     end
 
-    render status: 302, location: root_url
+    redirect_back fallback_location: root_url, notice: 'Input successfully parsed.'
   end
 
   def find_trips_with_stops
     trips = 0
     destination = Station.find_by_name(params[:destination])
+    routes = []
 
     if destination.nil?
       render status: 404, body: { error: 'Destination not found' }.to_json
@@ -72,11 +73,13 @@ class StationsController < ApplicationController
         case type_of_query
         when 'max_stops'
           if visited.length > 0
+            routes << visited
             trips += 1
             return
           end
         when 'exact_stops'
           if visited.length == max
+            routes << visited
             trips += 1
             return
           end
@@ -84,6 +87,7 @@ class StationsController < ApplicationController
           if dist < max && dist > 0
             visited_cl = visited.clone
             visited_cl << station
+            routes << visited_cl
             trips += 1
             # no return statment here, since circular paths are allowed but limited to the max distance
           end
@@ -121,7 +125,7 @@ class StationsController < ApplicationController
 
     traverse.call(origin, 0, [])
 
-    render status: 200, body: { answer: trips }.to_json
+    render status: 200, body: { answer: trips, route: routes.map { |e| parse_routes(e) } }.to_json
   end
 
   # GET /stations/1

@@ -70,6 +70,7 @@
                 </form>
 
                 <div class="answer"></div>
+                <div class="route"></div>
               </div>
             </div>
           </div>
@@ -91,7 +92,7 @@
                   <div>
                     <input class="form-control form-control-light mb-20" name="destination" type="text" placeholder="Enter route destination"/>
                   </div>
-                  <button class="btn w-full no-padding" appendage="units of distance"><span>Find Route</span>
+                  <button class="btn w-full no-padding" appendage="miles"><span>Find Route</span>
                   </button>
                 </form>
 
@@ -112,14 +113,13 @@
           <div class="container">
             <div class="row justify-content-center">
               <div class="col-12 col-sm-8 col-lg-5">
-                <form>
+                <form action="<%= parse_string_into_stations_and_routes_stations_url %>">
                   <div>
-                    <input class="form-control form-control-light mb-20" name="string" type="text" placeholder="Enter graph, eg: 'AB2 BC4 CD5 ...' "/>
+                    <input class="form-control form-control-light mb-20" name="string" type="text" placeholder="Enter graph, eg: 'AB2, BC4, CD5, ...' "/>
                   </div>
 
 
-                  <button class="btn w-full no-padding"><span>Parse Input</span>
-                  </button>
+                  <input type='submit' class="btn w-full no-padding" value='Parse Input' />
                 </form>
               </div>
             </div>
@@ -197,7 +197,13 @@
           $(that).parent('form').parent('.col-12').find('.answer').text(ans + ' ' + $(that).attr('appendage'));
           var route = JSON.parse(data).route;
           if (route != undefined) {
-            $(that).parent('form').parent('.col-12').find('.route').text(route);
+            var routes = "<ul>";
+            for (let i = 0; i < route.length; i++) {
+              routes += "<li>" + route[i] + "</li>"
+            }
+
+            routes += "</ul>"
+            $(that).parent('form').parent('.col-12').find('.route').html(routes);
           }
         })
         .fail(function($xhr) {
@@ -259,6 +265,10 @@
     font-weight: bold;
     font-size: 20px;
     margin-top: 30px;
+  }
+
+  li {
+    list-style: none;
   }
 
   .tabs-content > .tab-panel.active {

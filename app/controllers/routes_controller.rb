@@ -1,6 +1,6 @@
 class RoutesController < ApplicationController
   before_action :set_route, only: [:show, :edit, :update, :destroy]
-
+  include RoutesHelper
   # GET /routes
   # GET /routes.json
   def index
@@ -101,9 +101,9 @@ class RoutesController < ApplicationController
       return
     end
 
-    answer = paths.min_by(&:length).map(&:name)
+    answer = paths.min_by(&:length)
 
-    render status: 200, body: { answer: distances.min , route: answer.join(' -> ') }.to_json
+    render status: 200, body: { answer: distances.min , route: [parse_routes(answer)] }.to_json
   end
 
   # GET /routes/1
