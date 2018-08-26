@@ -34,7 +34,12 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
         ['A','D'] => { answer: 5, status: 200 },
         ['A','D','C'] => { answer: 13, status: 200 },
         ['A','E','B','C','D'] => { answer: 22, status: 200 },
-        ['A','E','D'] => {error: 'No Such Route', status: 404 }
+        ['A','E','D'] => {error: 'No Such Route', status: 404 },
+        'A-B-C' => { answer: 9, status: 200 },
+        'A-D' => { answer: 5, status: 200 },
+        'A-D-C' => { answer: 13, status: 200 },
+        'A-E-B-C-D' => { answer: 22, status: 200 },
+        'A-E-D' => {error: 'No Such Route', status: 404 }
     }
 
     cases.each do |path, answers|

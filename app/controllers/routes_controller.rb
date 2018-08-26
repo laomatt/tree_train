@@ -10,8 +10,13 @@ class RoutesController < ApplicationController
   def find_route_distance
     last_station = nil
     distance = 0
+    if params['stations'].is_a? String
+      stations = params["stations"].split('-')
+    else
+      stations = params["stations"]
+    end
 
-    params["stations"].each do |station_name|
+    stations.each do |station_name|
       next_station = Station.find_by_name(station_name)
 
       if last_station

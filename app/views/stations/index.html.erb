@@ -12,30 +12,33 @@
       <li><a href="#" id='addRoute' data-toggle="tab-number-route">Number of Routes</a></li>
       <li><a href="#" id='addRouteStations' data-toggle="tab-input">Input station and Routes</a></li>
     </ul>
-    <!-- tab-route-dist -->
 
     <div class="tabs-content mb-30" id="ecommerces-1-tabs">
 
+    <!-- FIND DISTANCES -->
       <div class="tab-panel" id="tab-route-dist">
         <section class="forms text-center p-60 p-lg-100">
           <h2 style="margin-bottom: 10px">Find the distance of a given route</h2>
           <div class="container">
             <div class="row justify-content-center">
               <div class="col-12 col-sm-8 col-lg-5">
-                <form>
+                <form action="<%= find_route_distance_routes_url %>" class="distance_form">
                   <div>
-                    <input class="form-control form-control-light mb-20" type="text" placeholder="Enter route seperated by hyphen, eg: A-B-C"/>
+                    <input class="form-control form-control-light mb-20" name="stations" type="text" placeholder="Enter route seperated by hyphen, eg: A-B-C"/>
                   </div>
-                  <button class="btn w-full no-padding"><span>Calculate total distance</span>
-                  </button>
+                  <button class="btn w-full no-padding" appendage='is the total distance.'><span>Calculate total distance</span></button>
                 </form>
+
+                <div class="answer">
+                  answer here
+                </div>
               </div>
             </div>
           </div>
         </section>
       </div>
 
-
+    <!-- FIND ROUTES -->
       <div class="tab-panel" id="tab-number-route">
         <section class="forms text-center p-60 p-lg-100">
           <h2 style="margin-bottom: 10px">Find the distance of a given route</h2>
@@ -68,6 +71,8 @@
 
       </div>
 
+
+      <!-- INPUT STRING -->
       <div class="tab-panel" id="tab-input">
 
         <section class="forms text-center p-60 p-lg-100">
@@ -122,32 +127,43 @@
         e.preventDefault()
         $('.tab-panel').removeClass('active');
         $('#' + $(this).attr('data-toggle')).addClass('active');
-      })
+      });
+
+      $('button').click(function(e) {
+        e.preventDefault();
+        $(this).parent('form').slideUp(500);
+        $(this).parent('form').parent('.col-12').find('.answer').text('working...')
+
+        var that = this;
+
+        $.ajax({
+          url: $(this).parent('form').attr('action'),
+          data: $(this).parent('form').serialize(),
+        })
+        .done(function(data) {
+          console.log("success");
+          var dist = JSON.parse(data).distance;
+          $(that).parent('form').parent('.col-12').find('.answer').css('color', 'green');
+          $(that).parent('form').parent('.col-12').find('.answer').text(dist + ' ' + $(that).attr('appendage'))
+        })
+        .fail(function($xhr) {
+          console.log("error");
+          var err = JSON.parse($xhr.responseText).error;
+          $(that).parent('form').parent('.col-12').find('.answer').css('color', 'red');
+          $(that).parent('form').parent('.col-12').find('.answer').text(err)
+        })
+        .always(function(data) {
+          $(that).parent('form').slideDown(500);
+        });
+
+        
+      });
     </script>
   </div>
 </section>
 
-<section class="forms text-center p-60 p-lg-100" id="forms-9" style="display: none;">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-12 col-sm-8 col-lg-5">
-        <h1 class="mb-15">Sign Up</h1>
-        <h4 class="mb-40">A small river named Duden flows by their place and supplies it with the necessary regelialia</h4>
-        <form>
-          <div>
-            <input class="form-control form-control-light mb-20" type="text" placeholder="Input with icon"/><span class="glyphicon glyphicon-eye-open form-control-feedback"></span>
-          </div>
-          <div>
-            <input class="form-control form-control-light mb-20" type="text" placeholder="Input with icon"/>
-          </div>
-          <button class="btn w-full no-padding"><span>Button</span>
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
 
+<!-- FOOTER -->
 <section class="footers text-center text-sm-left" id="footers-11">
   <div class="p-40 ph-15 ph-sm-30 ph-lg-70">
     <div class="row justify-content-between align-items-center">
@@ -181,6 +197,13 @@
 <style>
   .h-400 {
     height: 100px;
+  }
+
+  .answer {
+    padding: 2%;
+    font-weight: bold;
+    font-size: 20px;
+    margin-top: 30px;
   }
 
   .tabs-content > .tab-panel.active {
