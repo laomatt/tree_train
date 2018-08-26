@@ -15,12 +15,12 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
         { route: ['A','D','C'], answer: 13, status: 200 },
         { route: ['A','E','B','C','D'], answer: 22, status: 200 },
         { route: ['A','E','D'], error: 'No Such Route', status: 404 },
-        { route: ['A',nil,'D'], error: 'No Such Route', status: 404 },
-        { route: [nil,'E','D'], error: 'No Such Route', status: 404 },
-        { route: [nil,'E',nil], error: 'No Such Route', status: 404 },
-        { route: [nil,nil,nil], error: 'No Such Route', status: 404 },
+        { route: ['A','nil','D'], error: 'No Such Route', status: 404 },
+        { route: ['nil','E','D'], error: 'No Such Route', status: 404 },
+        { route: ['nil','E','nil'], error: 'No Such Route', status: 404 },
+        { route: ['nil','nil','nil'], error: 'No Such Route', status: 404 },
         { route: ['A','E','X'], error: 'No Such Route', status: 404 },
-        { route: [], error: 'A Route is Required', status: 422 },
+        { route: [], error: 'No Such Route', status: 404 },
         { route: '', error: 'A Route is Required', status: 422 },
         { route: 'A-B-C', answer: 9, status: 200 },
         { route: 'A-D', answer: 5, status: 200 },
@@ -34,17 +34,17 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
       assert_response test_case[:status], "problem was #{test_case[:route]}"
 
       if test_case[:status] == 200
-        assert_equal(test_case[:answer], JSON.parse(response.body)["answer"].to_i, "Distance of #{path} is wrong")
+        assert_equal(test_case[:answer], JSON.parse(response.body)["answer"].to_i, "Distance of #{path} is wrong: #{test_case[:route]}")
       else
-        assert_equal(test_case[:error], JSON.parse(response.body)["error"], "error message is wrong")
+        assert_equal(test_case[:error], JSON.parse(response.body)["error"], "error message is wrong: #{test_case[:route]}")
       end
     end
   end
 
   test "find shortest route" do 
     cases = [
-      # {origin: 'A', destination: 'C', answer: 9, status: 200},
-      # {origin: 'B', destination: 'B', answer: 9, status: 200}
+      {origin: 'A', destination: 'C', answer: 9, status: 200},
+      {origin: 'B', destination: 'B', answer: 9, status: 200}
     ]
 
     # TODO: check of no route exists

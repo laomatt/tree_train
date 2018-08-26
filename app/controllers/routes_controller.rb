@@ -10,6 +10,7 @@ class RoutesController < ApplicationController
   def find_route_distance
     last_station = nil
     distance = 0
+
     if params['stations'].is_a? String
       stations = params["stations"].split('-')
     else
