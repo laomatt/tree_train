@@ -8,7 +8,30 @@ class StationsController < ApplicationController
   end
 
   def parse_string_into_stations_and_routes
-    
+    str = params[:string]
+
+    str.split(' ').each do |s|
+      if Station.exists(name: s[0])
+        origin = Station.find_by_name(s[0])
+      else
+        origin = Station.create(name: s[0])
+      end
+
+      if Station.exists(name: s[1])
+        destination = Station.find_by_name(s[1])
+      else
+        destination = Station.create(name: s[1])
+      end
+
+      route = Route.where("origin_id = ? and destination_id = ?", origin.id, destination.id).first
+
+      if route
+        route.update_attributes(distance: s[2])
+      else
+        route = Route.create(origin: origin, destination: destination, distance: s[2])
+      end
+
+    end
   end
 
   def find_trips_with_stops

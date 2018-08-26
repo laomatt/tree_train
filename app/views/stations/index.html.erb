@@ -7,13 +7,93 @@
   <div class="container">
     <h1>Current Stations</h1>
     <ul class="nav-tabs mb-40" id="ecommerces-tabs">
-      <li><a href="#" id='addStation' data-toggle="tab">+ Station</a></li>
-      <li><a href="#" id='addRoute' data-toggle="tab">+ Route</a></li>
-      <li><a href="#" id='addRouteStations' data-toggle="tab">Input station and Routes</a></li>
-      <li><a href="#" id='clearData' data-toggle="tab">Clear Data</a></li>
+      <li><a href="#" id='addStation' data-toggle="stations-list">All Stations</a></li>
+      <li><a href="#" id='addStation' data-toggle="tab-route-dist">Route Distances</a></li>
+      <li><a href="#" id='addRoute' data-toggle="tab-number-route">Number of Routes</a></li>
+      <li><a href="#" id='addRouteStations' data-toggle="tab-input">Input station and Routes</a></li>
     </ul>
+    <!-- tab-route-dist -->
+
     <div class="tabs-content mb-30" id="ecommerces-1-tabs">
-      <div class="tab-panel active" id="ecommerce-1-tab-0">
+
+      <div class="tab-panel" id="tab-route-dist">
+        <section class="forms text-center p-60 p-lg-100">
+          <h2 style="margin-bottom: 10px">Find the distance of a given route</h2>
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-12 col-sm-8 col-lg-5">
+                <form>
+                  <div>
+                    <input class="form-control form-control-light mb-20" type="text" placeholder="Enter route seperated by hyphen, eg: A-B-C"/>
+                  </div>
+                  <button class="btn w-full no-padding"><span>Calculate total distance</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+
+      <div class="tab-panel" id="tab-number-route">
+        <section class="forms text-center p-60 p-lg-100">
+          <h2 style="margin-bottom: 10px">Find the distance of a given route</h2>
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-12 col-sm-8 col-lg-5">
+                <form>
+                  <div>
+                    <input class="form-control form-control-light mb-20" name="origin" type="text" placeholder="Enter route origin"/>
+                  </div>
+                  <div>
+                    <input class="form-control form-control-light mb-20" name="destination" type="text" placeholder="Enter route destination"/>
+                  </div>
+
+                  <div>
+                    <select class="form-control form-control-light mb-20" name="type" type="text" placeholder="Enter route destination">
+                      <option value="max_dist">Find By Max Distance</option>
+                      <option value="max_stops">Find By Max Stops</option>
+                      <option value="exact_stops">Find By Exact Stops</option>
+                    </select>
+                  </div>
+
+                  <button class="btn w-full no-padding"><span>Find Routes</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="tab-panel" id="tab-input">
+
+        <section class="forms text-center p-60 p-lg-100">
+          <h2 style="margin-bottom: 10px">Find the distance of a given route</h2>
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-12 col-sm-8 col-lg-5">
+                <form>
+                  <div>
+                    <input class="form-control form-control-light mb-20" name="string" type="text" placeholder="Enter graph, eg: 'AB2 BC4 CD5 ...' "/>
+                  </div>
+
+
+                  <button class="btn w-full no-padding"><span>Parse Input</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+      </div>
+
+
+      <div class="tab-panel active" id="stations-list">
         <% @stations.each do |station| %>
         <!-- Station item -->
             <div class="panel h-400 with-overlay p-30 d-flex justify-content-center">
@@ -38,12 +118,11 @@
     </div>
     </div>
     <script>
-      $('#ecommerces-1-tabs a').click(function (e) {
+      $('#ecommerces-tabs a').click(function (e) {
         e.preventDefault()
-        $(this).tab('show')
+        $('.tab-panel').removeClass('active');
+        $('#' + $(this).attr('data-toggle')).addClass('active');
       })
-
-
     </script>
   </div>
 </section>
@@ -68,6 +147,7 @@
     </div>
   </div>
 </section>
+
 <section class="footers text-center text-sm-left" id="footers-11">
   <div class="p-40 ph-15 ph-sm-30 ph-lg-70">
     <div class="row justify-content-between align-items-center">
@@ -77,14 +157,14 @@
             <div class="navbar-header"><a href=""></a></div>
           </div>
           <div class="col-auto">
-            <p>&copy; 2016 Great Simple All rights reserves</p>
+            <p>&copy; Matthew Lao</p>
           </div>
         </div>
       </div>
       <div class="col-12 col-lg-auto">
         <div class="row justify-content-center align-items-center">
           <div class="col-12 col-sm-auto mb-20 mb-sm-0">
-            <p>+39 02 367 409 12, 560 Mission St, San Francisco CA 94105, USA</p>
+            <p>San Francisco CA 94105, USA</p>
           </div>
           <div class="col-auto">
             </div>
@@ -101,10 +181,9 @@
 <style>
   .h-400 {
     height: 100px;
-    /*width: 50%;*/
   }
 
   .tabs-content > .tab-panel.active {
     /*display: inline-block;*/
-}
+  }
 </style>
