@@ -7,37 +7,58 @@ class StationsController < ApplicationController
     @stations = Station.includes(origins: :destination).all
   end
 
+  def parse_string_into_stations_and_routes
+    
+  end
+
   def find_trips_with_stops
     trips = 0
     destination = Station.find_by_name(params[:destination])
     max = params[:stops].to_i
-    traverse = ->(station,stops) do 
+    max_dist = params[:dist].to_i
+
+    type_of_query = params[:type]
+
+    traverse = ->(station,stops,dist) do 
       return if stops > max
 
-      if params[:type] == 'max'
-        if (stops > 0) && (station == destination)
-          trips += 1
-          return
+      if station == destination
+        case type_of_query
+        when 'max_stops'
+          if stops > 0
+            trips += 1
+            return
+          end
+        when 'max_dist'
+          if max_dist >= dist && dist > 0
+            trips += 1
+            return
+          end
+        when 'exact_stops'
+          if stops == max
+            trips += 1
+            return
+          end
         end
       end
 
-      if params[:type] == 'exact'
-        if (stops == max) && (station == destination)
-          trips += 1
-          return
-        end
-      end
-
-      # find all the destinations
       stops += 1
-      station.destinations.each do |dest|
-        traverse.call(dest,stops.clone)
+
+      if type_of_query == 'max_dist'
+        station.origins.each do |dest|
+          traverse.call(dest.destination,stops.clone,dist.clone+dest.distance)
+        end
+      else
+        # find all the destinations
+        station.destinations.each do |dest|
+          traverse.call(dest,stops.clone,nil)
+        end
       end
     end
 
     # find the origin
     origin = Station.find_by_name(params[:origin])
-    traverse.call(origin, 0)
+    traverse.call(origin, 0, 0)
 
     render status: 200, body: { num_trips: trips }.to_json
   end

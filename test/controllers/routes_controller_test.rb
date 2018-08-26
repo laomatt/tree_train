@@ -50,13 +50,6 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "should give a 404 error if the route doesn't exist" do 
-    get find_route_distance_routes_url, params: { stations: [@station_b.id, @station_d.id, @station_b.id]}
-    assert_response :not_found
-    assert_equal("No Such Route", JSON.parse(response.body)["error"], "error message is wrong")
-
-  end
-
   test "find shortest route" do 
     cases = [
       {origin: 'A', destination: 'C', answer: 9, status: 200},
@@ -67,50 +60,9 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
       get find_shortest_route_routes_url, params: test_case.slice(:origin, :destination)
 
       assert_response test_case[:status]
-      assert_equal(test_case[:answer], JSON.parse(response.body)['distance'], "distace wrong for #{test_case[:origin]} to #{test_case[:destination]}")
+
+      assert_equal(test_case[:answer], JSON.parse(response.body)['distance'].to_i, "distace wrong for #{test_case[:origin]} to #{test_case[:destination]}")
     end
   end
 
-
-
-  # test "should get index" do
-  #   get routes_url
-  #   assert_response :success
-  # end
-
-  # test "should get new" do
-  #   get new_route_url
-  #   assert_response :success
-  # end
-
-  # test "should create route" do
-  #   assert_difference('Route.count') do
-  #     post routes_url, params: { route: { destination_id: @route_1.destination_id, distance: @route_1.distance, origin_id: @route_1.origin_id } }
-  #   end
-
-  #   assert_redirected_to route_url(Route.last)
-  # end
-
-  # test "should show route" do
-  #   get route_url(@route)
-  #   assert_response :success
-  # end
-
-  # test "should get edit" do
-  #   get edit_route_url(@route)
-  #   assert_response :success
-  # end
-
-  # test "should update route" do
-  #   patch route_url(@route), params: { route: { destination_id: @route.destination_id, distance: @route.distance, origin_id: @route.origin_id } }
-  #   assert_redirected_to route_url(@route)
-  # end
-
-  # test "should destroy route" do
-  #   assert_difference('Route.count', -1) do
-  #     delete route_url(@route)
-  #   end
-
-  #   assert_redirected_to routes_url
-  # end
 end

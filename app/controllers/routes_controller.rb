@@ -12,7 +12,7 @@ class RoutesController < ApplicationController
     distance = 0
 
     params["stations"].each do |station_id|
-      next_station = Station.find(station_id.to_i)
+      next_station = Station.find(station_id)
 
       if last_station
         if last_station.destinations.include? next_station
@@ -31,9 +31,47 @@ class RoutesController < ApplicationController
   end
 
   def find_shortest_route
+    last_station = nil
     distance = 0
+    origin = Station.find_by_name(params[:origin])
+    destination = Station.find_by_name(params[:destination])
+    distances = []
     
-    render status: 200, body: { distance: distance }.to_json
+    traverse = ->(station, travel_distance, visited) do 
+      visited << station
+
+      station.origins.includes(:destination).each do |st|
+        new_travel_distance = travel_distance.clone
+        new_travel_distance += st.distance.to_i
+
+        if st.destination == destination
+          distances << new_travel_distance if new_travel_distance > 0
+          return
+        end
+
+        # we should not visit already visited stations
+        traverse.call(st.destination, new_travel_distance, visited.clone) if !visited.include? st.destination
+      end
+    end
+
+
+    if origin == destination
+      # if it is a round trip we want to skip past the first stop
+      origin.origins.includes(:destination).each do |d|
+        traverse.call(d.destination, d.distance, [origin])
+      end
+    else
+      traverse.call(origin, 0, [])
+    end
+
+    # we should return a 404 if there exists no current round trips
+    if distances.empty?
+      render status: 404, body: { error: "there are no trips from #{origin.name} ro #{destination.name}" }.to_json
+      return
+      
+    end
+
+    render status: 200, body: { distance: distances.min }.to_json
   end
 
   # GET /routes/1

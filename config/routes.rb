@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :stations do 
     collection do 
       get 'find_trips_with_stops'
+      get 'parse_string_into_stations_and_routes'
     end
   end
 

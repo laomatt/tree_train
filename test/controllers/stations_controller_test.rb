@@ -27,8 +27,9 @@ class StationsControllerTest < ActionDispatch::IntegrationTest
 
   test 'find round trips' do 
     test_cases = [
-      { origin: 'C', destination: 'C', stops: 3, type: 'max', answer: 2, status: 200 },
-      { origin: 'A', destination: 'C', stops: 4, type: 'exact', answer: 3, status: 200 }
+      { origin: 'C', destination: 'C', stops: 3, type: 'max_stops', answer: 2, status: 200 },
+      { origin: 'A', destination: 'C', stops: 4, type: 'exact_stops', answer: 3, status: 200 },
+      { origin: 'C', destination: 'C', dist: 30, type: 'max_dist', answer: 7, status: 200 }
     ]
 
     test_cases.each do |t|
@@ -45,45 +46,4 @@ class StationsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-
-  # test "should get index" do
-  #   get stations_url
-  #   assert_response :success
-  # end
-
-  # test "should get new" do
-  #   get new_station_url
-  #   assert_response :success
-  # end
-
-  # test "should create station" do
-  #   assert_difference('Station.count') do
-  #     post stations_url, params: { station: { name: @station.name } }
-  #   end
-
-  #   assert_redirected_to station_url(Station.last)
-  # end
-
-  # test "should show station" do
-  #   get station_url(@station)
-  #   assert_response :success
-  # end
-
-  # test "should get edit" do
-  #   get edit_station_url(@station)
-  #   assert_response :success
-  # end
-
-  # test "should update station" do
-  #   patch station_url(@station), params: { station: { name: @station.name } }
-  #   assert_redirected_to station_url(@station)
-  # end
-
-  # test "should destroy station" do
-  #   assert_difference('Station.count', -1) do
-  #     delete station_url(@station)
-  #   end
-
-  #   assert_redirected_to stations_url
-  # end
 end
