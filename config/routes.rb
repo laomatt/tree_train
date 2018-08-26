@@ -8,10 +8,9 @@ Rails.application.routes.draw do
   
   resources :stations do 
     collection do 
-      get 'find_trips_with_max_stops'
+      get 'find_trips_with_stops'
     end
   end
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   root "stations#index" 
 end

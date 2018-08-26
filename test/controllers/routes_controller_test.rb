@@ -39,7 +39,9 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
 
     cases.each do |path, answers|
       get find_route_distance_routes_url, params: { stations: path.map { |e| Station.find_by_name(e).id }}
+
       assert_response answers[:status]
+
       if answers[:status] == 200
         assert_equal(answers[:answer], JSON.parse(response.body)["distance"].to_i, "Distance of #{path} is wrong")
       else
@@ -55,9 +57,21 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
 
   end
 
-  # test "should find the shortest route" do 
-  #   get find_shortest_route_routes_url, params: {}
-  # end
+  test "find shortest route" do 
+    cases = [
+      {origin: 'A', destination: 'C', answer: 9, status: 200},
+      {origin: 'B', destination: 'B', answer: 9, status: 200}
+    ]
+
+    cases.each do |test_case|
+      get find_shortest_route_routes_url, params test_case.splice(:origin, :destination)
+
+      assert_response test_case[:status]
+      assert_equal(test_case[:answer], JSON.parse(response.body)['distance'])
+    end
+  end
+
+
 
   # test "should get index" do
   #   get routes_url

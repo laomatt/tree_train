@@ -27,14 +27,16 @@ class StationsControllerTest < ActionDispatch::IntegrationTest
 
   test 'find round trips' do 
     test_cases = [
-      { origin: 'C', destination: 'C', max: 3, answer: 2, status: 200 }
+      { origin: 'C', destination: 'C', stops: 3, type: 'max', answer: 2, status: 200 },
+      { origin: 'A', destination: 'C', stops: 4, type: 'exact', answer: 3, status: 200 }
     ]
 
     test_cases.each do |t|
-      get find_trips_with_max_stops_stations_url, params: {
+      get find_trips_with_stops_stations_url, params: {
           origin: t[:origin], 
           destination: t[:destination], 
-          max_stops: t[:max] 
+          stops: t[:stops],
+          type: t[:type]
         }
 
       assert_response t[:status]

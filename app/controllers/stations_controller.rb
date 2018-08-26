@@ -7,16 +7,25 @@ class StationsController < ApplicationController
     @stations = Station.includes(origins: :destination).all
   end
 
-  def find_trips_with_max_stops
+  def find_trips_with_stops
     trips = 0
     destination = Station.find_by_name(params[:destination])
-    max = params[:max_stops].to_i
+    max = params[:stops].to_i
     traverse = ->(station,stops) do 
       return if stops > max
 
-      if (stops > 0) && (station == destination)
-        trips += 1
-        return
+      if params[:type] == 'max'
+        if (stops > 0) && (station == destination)
+          trips += 1
+          return
+        end
+      end
+
+      if params[:type] == 'exact'
+        if (stops == max) && (station == destination)
+          trips += 1
+          return
+        end
       end
 
       # find all the destinations
