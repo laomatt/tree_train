@@ -29,7 +29,7 @@ class StationsControllerTest < ActionDispatch::IntegrationTest
     test_cases = [
       { origin: 'C', destination: 'C', stops: 3, type: 'max_stops', answer: 2, status: 200 },
       { origin: 'A', destination: 'C', stops: 4, type: 'exact_stops', answer: 3, status: 200 },
-      { origin: 'C', destination: 'C', dist: 30, type: 'max_dist', answer: 7, status: 200 }
+      { origin: 'C', destination: 'C', max_dist: 30, type: 'max_dist', answer: 7, status: 200 }
     ]
 
     test_cases.each do |t|
@@ -37,7 +37,8 @@ class StationsControllerTest < ActionDispatch::IntegrationTest
           origin: t[:origin], 
           destination: t[:destination], 
           stops: t[:stops],
-          type: t[:type]
+          type: t[:type],
+          max_dist: t[:max_dist]
         }
 
       assert_response t[:status]

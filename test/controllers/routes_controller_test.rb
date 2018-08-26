@@ -38,7 +38,7 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
     }
 
     cases.each do |path, answers|
-      get find_route_distance_routes_url, params: { stations: path.map { |e| Station.find_by_name(e).id }}
+      get find_route_distance_routes_url, params: { stations: path }
 
       assert_response answers[:status]
 

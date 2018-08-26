@@ -11,12 +11,12 @@ class RoutesController < ApplicationController
     last_station = nil
     distance = 0
 
-    params["stations"].each do |station_id|
-      next_station = Station.find(station_id)
+    params["stations"].each do |station_name|
+      next_station = Station.find_by_name(station_name)
 
       if last_station
         if last_station.destinations.include? next_station
-          distance += last_station.origins.select { |e| e.destination_id == station_id.to_i }.first.distance
+          distance += last_station.origins.includes(:destination).select { |e| e.destination.name == station_name }.first.distance
         else
           render status: :not_found, body: { error: 'No Such Route' }.to_json
           return
