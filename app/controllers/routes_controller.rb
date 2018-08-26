@@ -73,6 +73,18 @@ class RoutesController < ApplicationController
       end
     end
 
+    # we should return a 404 if there exists no current round trips
+    if origin.nil?
+      render status: 404, body: { error: "Origin not found" }.to_json
+      return
+    end
+
+    # we should return a 404 if there exists no current round trips
+    if destination.nil?
+      render status: 404, body: { error: "Destination not found" }.to_json
+      return
+    end
+
 
     if origin == destination
       # if it is a round trip we want to skip past the first stop
@@ -85,7 +97,7 @@ class RoutesController < ApplicationController
 
     # we should return a 404 if there exists no current round trips
     if distances.empty?
-      render status: 404, body: { error: "there are no trips from #{origin.name} ro #{destination.name}" }.to_json
+      render status: 404, body: { error: "there are no trips from #{origin.name} to #{destination.name}" }.to_json
       return
     end
 

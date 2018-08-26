@@ -42,7 +42,10 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
       {origin: 'A', destination: 'C', answer: 9, status: 200},
       {origin: 'B', destination: 'B', answer: 9, status: 200},
       {origin: '', destination: 'B', error: 'Origin not found', status: 404},
-      {origin: 'B', destination: '', error: 'Destination not found', status: 404}
+      {origin: 'X', destination: 'B', error: 'Origin not found', status: 404},
+      {origin: 'B', destination: '', error: 'Destination not found', status: 404},
+      {origin: 'B', destination: 'X', error: 'Destination not found', status: 404},
+      {origin: 'D', destination: 'A', error: 'there are no trips from D to A', status: 404}
     ]
 
     # TODO: check of no route exists
@@ -54,8 +57,7 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
       if test_case[:status] == 200
         assert_equal(test_case[:answer], JSON.parse(response.body)['answer'].to_i, "distace wrong for #{test_case[:origin]} to #{test_case[:destination]}")
       else
-        assert_equal(test_case[:error], JSON.parse(response.body)['error'].to_i, "error wrong for #{test_case[:origin]} to #{test_case[:destination]}")
-        
+        assert_equal(test_case[:error], JSON.parse(response.body)['error'], "error wrong for #{test_case[:origin]} to #{test_case[:destination]}")
       end
     end
   end
