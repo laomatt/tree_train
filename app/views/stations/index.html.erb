@@ -23,7 +23,7 @@
           <div class="container">
             <div class="row justify-content-center">
               <div class="col-12 col-sm-8 col-lg-5">
-                <form action="<%= find_route_distance_routes_url %>" class="distance_form">
+                <form action="<%= find_route_distance_routes_url %>" method='GET' class="distance_form">
                   <div>
                     <input class="form-control form-control-light mb-20" name="stations" type="text" placeholder="Enter route seperated by hyphen, eg: A-B-C"/>
                   </div>
@@ -44,7 +44,7 @@
           <div class="container">
             <div class="row justify-content-center">
               <div class="col-12 col-sm-8 col-lg-5">
-                <form action="<%= find_trips_with_stops_stations_url %>">
+                <form action="<%= find_trips_with_stops_stations_url %>" method='GET'>
                   <div>
                     <input class="form-control form-control-light mb-20" name="origin" type="text" placeholder="Enter route origin"/>
                   </div>
@@ -85,7 +85,7 @@
           <div class="container">
             <div class="row justify-content-center">
               <div class="col-12 col-sm-8 col-lg-5">
-                <form action="<%= find_shortest_route_routes_url %>">
+                <form action="<%= find_shortest_route_routes_url %>" method='GET'>
                   <div>
                     <input class="form-control form-control-light mb-20" name="origin" type="text" placeholder="Enter route origin"/>
                   </div>
@@ -113,7 +113,7 @@
           <div class="container">
             <div class="row justify-content-center">
               <div class="col-12 col-sm-8 col-lg-5">
-                <form action="<%= parse_string_into_stations_and_routes_stations_url %>">
+                <form action="<%= parse_string_into_stations_and_routes_stations_url %>" method='POST'>
                   <div>
                     <input class="form-control form-control-light mb-20" name="string" type="text" placeholder="Enter graph, eg: 'AB2, BC4, CD5, ...' "/>
                   </div>
@@ -189,6 +189,7 @@
         $.ajax({
           url: $(this).parent('form').attr('action'),
           data: $(this).parent('form').serialize(),
+          method: $(this).parent('form').attr('method')
         })
         .done(function(data) {
           console.log("success");

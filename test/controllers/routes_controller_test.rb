@@ -56,9 +56,33 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
 
       if test_case[:status] == 200
         assert_equal(test_case[:answer], JSON.parse(response.body)['answer'].to_i, "distace wrong for #{test_case[:origin]} to #{test_case[:destination]}")
+        
+        # get djystras_algo_for_shortest_path_routes_url, params: test_case.slice(:origin, :destination)
+        # assert_equal(test_case[:answer], JSON.parse(response.body)['answer'].to_i, "distace wrong for #{test_case[:origin]} to #{test_case[:destination]}")
       else
         assert_equal(test_case[:error], JSON.parse(response.body)['error'], "error wrong for #{test_case[:origin]} to #{test_case[:destination]}")
       end
+    end
+  end
+
+  test "find shortest route via djystras algorithm" do
+
+    # lets create a larger graph
+    post parse_string_into_stations_and_routes_stations_url, params: { string: "GF3, RT8, FT3, PG4, KP4, PK7, FP9, PO20, OR5, RV5, VX10, XZ7, ZS12, SK3, KL10, SM2, MR9, RP8, PR40, PT8, TF4"}
+
+    cases = [
+      {origin: 'G', destination: 'Z', answer: 59, status: 200},
+      {origin: 'F', destination: 'V', answer: 39, status: 200},
+      {origin: 'F', destination: 'P', answer: 9, status: 200}
+    ]
+
+    cases.each do |test_case|
+      get djystras_algo_for_shortest_path_routes_url, params: test_case.slice(:origin, :destination)
+      assert_equal(test_case[:answer], JSON.parse(response.body)['answer'].to_i, "distace wrong for #{test_case[:origin]} to #{test_case[:destination]}")
+
+      
+      get find_shortest_route_routes_url, params: test_case.slice(:origin, :destination)
+      assert_equal(test_case[:answer], JSON.parse(response.body)['answer'].to_i, "distace wrong for #{test_case[:origin]} to #{test_case[:destination]}")
     end
   end
 

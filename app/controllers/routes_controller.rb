@@ -1,3 +1,4 @@
+require 'set'
 class RoutesController < ApplicationController
   before_action :set_route, only: [:show, :edit, :update, :destroy]
   include RoutesHelper
@@ -104,6 +105,48 @@ class RoutesController < ApplicationController
     answer = paths.min_by(&:length)
 
     render status: 200, body: { answer: distances.min , route: [parse_routes(answer)] }.to_json
+  end
+
+  def djystras_algo_for_shortest_path
+    memo = {}
+    origin = Station.find_by_name(params[:origin])
+    destination = Station.find_by_name(params[:destination])
+    visited = Set.new
+    # vertex => {prev_vert: node, dist_from_org: int}
+    # start with origin, find its path from itself
+    memo[origin] = {prev_vert: nil, dist_from_org: 0}
+    # examine all of its unvisited neighbors (origins), and record all of its neighbors path sum from orgin to it (so dist_from_org from the previous node)
+    traverse = ->(node) do 
+      dist_from_o = memo[node][:dist_from_org]
+      # add the previus node to the visited set
+      visited.add node
+      node.origins.includes(:destination).each do |org|
+        d = org.destination
+        # if any of these sums is less than thier recorded sums, then we replace the value with the sum
+        summed = org.distance + dist_from_o
+        if memo[d]
+          if summed < memo[d][:dist_from_org]
+            memo[d][:dist_from_org] = org.distance + dist_from_o 
+            # change the previous node in each of the neighbors to the last node (origin in this case)
+            memo[d][:prev_vert] = node
+          end
+        else
+          memo[d] = { prev_vert: node, dist_from_org: summed }
+        end
+        
+        traverse.call(d) if !visited.include?(d)
+      end
+    end
+
+    traverse.call(origin)
+
+    if memo[destination].nil?
+      render status: 404, body: { error: "there are no trips from #{origin.name} to #{destination.name}" }.to_json
+      return
+    end
+
+    answer = memo[destination][:dist_from_org]
+    render status: 200, body: { answer: answer }.to_json
   end
 
   # GET /routes/1

@@ -130,7 +130,7 @@ class StationsController < ApplicationController
             dest,
             nil,
             visited.clone
-          ) #if !visited[1..-1].include?(dest)
+          ) #if !valid_paths_so_far.include?(vis)
         end
       end
     end
