@@ -46,12 +46,21 @@
               <div class="col-12 col-sm-8 col-lg-5">
                 <form action="<%= find_trips_with_stops_stations_url %>" method='GET'>
                   <div>
-                    <input class="form-control form-control-light mb-20" name="origin" type="text" placeholder="Enter route origin"/>
+                    <select class="form-control form-control-light mb-20" name="origin" type="text" placeholder="Enter route origin">
+                      <option value="">Select route origin</option>
+                      <% Station.all.each do |station| %>
+                        <option value="<%= station.name %>"><%= station.name %></option>
+                      <% end %>
+                    </select>
                   </div>
                   <div>
-                    <input class="form-control form-control-light mb-20" name="destination" type="text" placeholder="Enter route destination"/>
+                    <select class="form-control form-control-light mb-20" name="destination" type="text" placeholder="Enter route destination">
+                      <option value="">Select route destination</option>
+                      <% Station.all.each do |station| %>
+                        <option value="<%= station.name %>"><%= station.name %></option>
+                      <% end %>
+                    </select>
                   </div>
-
                   <div>
                     <select class="form-control form-control-light mb-20" id='type-selection' name="type" type="text" placeholder="Enter route destination">
                       <option value="">Please select query type</option>
@@ -87,10 +96,20 @@
               <div class="col-12 col-sm-8 col-lg-5">
                 <form action="<%= find_shortest_route_routes_url %>" method='GET'>
                   <div>
-                    <input class="form-control form-control-light mb-20" name="origin" type="text" placeholder="Enter route origin"/>
+                    <select class="form-control form-control-light mb-20" name="origin" type="text" placeholder="Enter route origin">
+                      <option value="">Select route origin</option>
+                      <% Station.all.each do |station| %>
+                        <option value="<%= station.name %>"><%= station.name %></option>
+                      <% end %>
+                    </select>
                   </div>
                   <div>
-                    <input class="form-control form-control-light mb-20" name="destination" type="text" placeholder="Enter route destination"/>
+                    <select class="form-control form-control-light mb-20" name="destination" type="text" placeholder="Enter route destination">
+                      <option value="">Select route destination</option>
+                      <% Station.all.each do |station| %>
+                        <option value="<%= station.name %>"><%= station.name %></option>
+                      <% end %>
+                    </select>
                   </div>
                   <button class="btn w-full no-padding" appendage="miles"><span>Find Route</span>
                   </button>
