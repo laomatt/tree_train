@@ -94,36 +94,42 @@ class RoutesController < ApplicationController
   end
 
   def djystras_algo_for_shortest_path
-    # this is a better algorithm than the one I am using for getting the min distance, since it is a greedy algorithm and hence does not need to look at ALL the possible paths, but just calculates as it goes along
+    # this is a better algorithm than the one I am using for getting the min distance, since it is a greedy algorithm and hence does not need to look at ALL the possible paths, but just calculates as it goes along, but this does not work for cases in which the origin is the same as the destination
 
     memo = {}
     visited = Set.new
     
 
-    # vertex => {prev_vert: node, dist_from_org: int}
+    # vertex => {previous_node: node, distance_from_origin: int}
     # start with origin, find its path from itself
-    memo[@origin] = {prev_vert: nil, dist_from_org: 0}
-    # examine all of its unvisited neighbors (origins), and record all of its neighbors path sum from orgin to it (so dist_from_org from the previous node)
+    memo[@origin] = {previous_node: nil, distance_from_origin: 0}
+    # examine all of its unvisited neighbors (origins), and record all of its neighbors path sum from orgin to it (so distance_from_origin from the previous node)
     traverse = ->(node) do 
-      dist_from_o = memo[node][:dist_from_org]
-      # add the previus node to the visited set
+      dist_from_o = memo[node][:distance_from_origin]
+      # add the previous node to the visited set
       visited.add node
+      sma = nil
       node.origins.includes(:destination).each do |org|
         d = org.destination
         # if any of these sums is less than thier recorded sums, then we replace the value with the sum
         summed = org.distance + dist_from_o
         if memo[d]
-          if summed < memo[d][:dist_from_org]
-            memo[d][:dist_from_org] = org.distance + dist_from_o 
+          if summed < memo[d][:distance_from_origin]
+            memo[d][:distance_from_origin] = summed
             # change the previous node in each of the neighbors to the last node (origin in this case)
-            memo[d][:prev_vert] = node
+            memo[d][:previous_node] = node
           end
         else
-          memo[d] = { prev_vert: node, dist_from_org: summed }
+          memo[d] = { previous_node: node, distance_from_origin: summed }
         end
+
         
-        traverse.call(d) if !visited.include?(d)
       end
+
+      # call traverse on the smallest distance from origin currently
+      sma = memo.reject {|k,v| visited.include?(k) }.sort_by{|k,v| v[:distance_from_origin]}.first
+      return if sma.nil?
+      traverse.call(sma[0]) 
     end
 
     traverse.call(@origin)
@@ -136,15 +142,13 @@ class RoutesController < ApplicationController
     # to get the routes we need to work backwards via the 'prev_node' colomn
     current = @destination
     path = [@origin]
-    # while current != origin
-    while memo[current]
-      path.unshift(current)
-      current = memo[current][:prev_node]
-    end
+    # while memo[current]
+    #   path.unshift(current)
+    #   current = memo[current][:prev_node]
+    # end
 
-    answer = memo[@destination][:dist_from_org]
+    answer = memo[@destination][:distance_from_origin]
     # routes not quite working
-    # render status: 200, body: { answer: answer, route: [parse_routes(path.compact)] }.to_json
     render status: 200, body: { answer: answer }.to_json
   end
 
