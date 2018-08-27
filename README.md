@@ -1,24 +1,12 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Welcome to the app
 
-Things you may want to cover:
+This will seed the DB will all nessesary data to start with
 
-* Ruby version
+```
+be rake db:migrate
+be rake db:seed
+```
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Or you may follow the onscreen instructions to parse your own graph from a string.
