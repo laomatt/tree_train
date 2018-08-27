@@ -57,11 +57,17 @@ class RoutesControllerTest < ActionDispatch::IntegrationTest
       if test_case[:status] == 200
         assert_equal(test_case[:answer], JSON.parse(response.body)['answer'].to_i, "distance wrong for #{test_case[:origin]} to #{test_case[:destination]}")
 
+        get iterative_find_shortest_distance_routes_url, params: test_case.slice(:origin, :destination)
+        assert_equal(test_case[:answer], JSON.parse(response.body)['answer'].to_i, "djykstra distance wrong for #{test_case[:origin]} to #{test_case[:destination]}")
+
         if test_case[:destination] != test_case[:origin]
           get djystras_algo_for_shortest_path_routes_url, params: test_case.slice(:origin, :destination)
           assert_equal(test_case[:answer], JSON.parse(response.body)['answer'].to_i, "djykstra distance wrong for #{test_case[:origin]} to #{test_case[:destination]}")
         end
       else
+        get iterative_find_shortest_distance_routes_url, params: test_case.slice(:origin, :destination)
+        assert_equal(test_case[:answer], JSON.parse(response.body)['answer'].to_i, "djykstra distance wrong for #{test_case[:origin]} to #{test_case[:destination]}")
+
         assert_equal(test_case[:error], JSON.parse(response.body)['error'], "error wrong for #{test_case[:origin]} to #{test_case[:destination]}")
       end
     end

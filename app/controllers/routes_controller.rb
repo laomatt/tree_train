@@ -1,7 +1,7 @@
 require 'set'
 class RoutesController < ApplicationController
   before_action :set_route, only: [:show, :edit, :update, :destroy]
-  before_action :find_origin_and_destination, only: [:find_shortest_route, :djystras_algo_for_shortest_path]
+  before_action :find_origin_and_destination, only: [:find_shortest_route, :djystras_algo_for_shortest_path, :iterative_find_shortest_distance]
   include RoutesHelper
   # GET /routes
   # GET /routes.json
@@ -142,14 +142,28 @@ class RoutesController < ApplicationController
     # to get the routes we need to work backwards via the 'prev_node' colomn
     current = @destination
     path = [@origin]
-    # while memo[current]
-    #   path.unshift(current)
-    #   current = memo[current][:prev_node]
-    # end
 
     answer = memo[@destination][:distance_from_origin]
     # routes not quite working
     render status: 200, body: { answer: answer }.to_json
+  end
+
+  def iterative_find_shortest_distance
+    # iterativily parse. the graph
+    current = @origin
+    paths = []
+    visited = Set.new
+
+    current.origin.includes(:destination).each do |org|
+      next if visited.include? org.destination
+      
+      # current = org.destination
+      # while current != destination
+
+      # end
+    end
+
+    render status: 200, body: { answer: 0 }.to_json
   end
 
   private

@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 	  	get 'find_route_distance'
 	  	get 'find_shortest_route'
       get 'djystras_algo_for_shortest_path'
+      get 'iterative_find_shortest_distance'
   	end
   end
   
