@@ -10,3 +10,9 @@ be rake db:seed
 ```
 
 Or you may follow the onscreen instructions to parse your own graph from a string.
+
+<p>In order to run the tests:</p>
+
+```
+be rake test
+```
