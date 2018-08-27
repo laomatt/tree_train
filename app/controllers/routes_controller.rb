@@ -1,6 +1,7 @@
 require 'set'
 class RoutesController < ApplicationController
   before_action :set_route, only: [:show, :edit, :update, :destroy]
+  before_action :find_origin_and_destination, only: [:find_shortest_route, :djystras_algo_for_shortest_path]
   include RoutesHelper
   # GET /routes
   # GET /routes.json
@@ -50,8 +51,6 @@ class RoutesController < ApplicationController
   def find_shortest_route
     last_station = nil
     distance = 0
-    origin = Station.find_by_name(params[:origin])
-    destination = Station.find_by_name(params[:destination])
     distances = []
     paths = []
     
@@ -62,7 +61,7 @@ class RoutesController < ApplicationController
         new_travel_distance = travel_distance.clone
         new_travel_distance += st.distance.to_i
 
-        if st.destination == destination
+        if st.destination == @destination
           visited << st.destination
           paths << visited
           distances << new_travel_distance if new_travel_distance > 0
@@ -74,31 +73,18 @@ class RoutesController < ApplicationController
       end
     end
 
-    # we should return a 404 if there exists no current round trips
-    if origin.nil?
-      render status: 404, body: { error: "Origin not found" }.to_json
-      return
-    end
-
-    # we should return a 404 if there exists no current round trips
-    if destination.nil?
-      render status: 404, body: { error: "Destination not found" }.to_json
-      return
-    end
-
-
-    if origin == destination
+    if @origin == @destination
       # if it is a round trip we want to skip past the first stop
-      origin.origins.includes(:destination).each do |d|
-        traverse.call(d.destination, d.distance, [origin])
+      @origin.origins.includes(:destination).each do |d|
+        traverse.call(d.destination, d.distance, [@origin])
       end
     else
-      traverse.call(origin, 0, [])
+      traverse.call(@origin, 0, [])
     end
 
     # we should return a 404 if there exists no current round trips
     if distances.empty?
-      render status: 404, body: { error: "there are no trips from #{origin.name} to #{destination.name}" }.to_json
+      render status: 404, body: { error: "there are no trips from #{@origin.name} to #{@destination.name}" }.to_json
       return
     end
 
@@ -108,13 +94,15 @@ class RoutesController < ApplicationController
   end
 
   def djystras_algo_for_shortest_path
+    # this is a better algorithm than the one I am using for getting the min distance, since it is a greedy algorithm and hence does not need to look at ALL the possible paths, but just calculates as it goes along
+
     memo = {}
-    origin = Station.find_by_name(params[:origin])
-    destination = Station.find_by_name(params[:destination])
     visited = Set.new
+    
+
     # vertex => {prev_vert: node, dist_from_org: int}
     # start with origin, find its path from itself
-    memo[origin] = {prev_vert: nil, dist_from_org: 0}
+    memo[@origin] = {prev_vert: nil, dist_from_org: 0}
     # examine all of its unvisited neighbors (origins), and record all of its neighbors path sum from orgin to it (so dist_from_org from the previous node)
     traverse = ->(node) do 
       dist_from_o = memo[node][:dist_from_org]
@@ -138,14 +126,25 @@ class RoutesController < ApplicationController
       end
     end
 
-    traverse.call(origin)
+    traverse.call(@origin)
 
-    if memo[destination].nil?
-      render status: 404, body: { error: "there are no trips from #{origin.name} to #{destination.name}" }.to_json
+    if memo[@destination].nil?
+      render status: 404, body: { error: "there are no trips from #{params[:origin]} to #{params[:destination]}" }.to_json
       return
     end
 
-    answer = memo[destination][:dist_from_org]
+    # to get the routes we need to work backwards via the 'prev_node' colomn
+    current = @destination
+    path = [@origin]
+    # while current != origin
+    while memo[current]
+      path.unshift(current)
+      current = memo[current][:prev_node]
+    end
+
+    answer = memo[@destination][:dist_from_org]
+    # routes not quite working
+    # render status: 200, body: { answer: answer, route: [parse_routes(path.compact)] }.to_json
     render status: 200, body: { answer: answer }.to_json
   end
 
@@ -204,6 +203,24 @@ class RoutesController < ApplicationController
   end
 
   private
+
+    def find_origin_and_destination
+      @origin = Station.find_by_name(params[:origin])
+      @destination = Station.find_by_name(params[:destination])
+
+      # we should return a 404 if there exists no current round trips
+      if @origin.nil?
+        render status: 404, body: { error: "Origin not found" }.to_json
+        return
+      end
+
+      # we should return a 404 if there exists no current round trips
+      if @destination.nil?
+        render status: 404, body: { error: "Destination not found" }.to_json
+        return
+      end
+
+    end
     # Use callbacks to share common setup or constraints between actions.
     def set_route
       @route = Route.find(params[:id])
