@@ -34,7 +34,7 @@ class RoutesController < ApplicationController
 
       if last_station
         if last_station.destinations.include? next_station
-          distance += last_station.origins.includes(:destination).select { |e| e.destination.name == station_name }.first.distance
+          distance += last_station.end_points.select { |e| e.destination.name == station_name }.first.distance
         else
           render status: :not_found, body: { error: 'No Such Route' }.to_json
           return
@@ -57,7 +57,7 @@ class RoutesController < ApplicationController
     traverse = ->(station, travel_distance, visited) do 
       visited << station
 
-      station.origins.includes(:destination).each do |st|
+      station.end_points.each do |st|
         new_travel_distance = travel_distance.clone
         new_travel_distance += st.distance.to_i
 
@@ -75,7 +75,7 @@ class RoutesController < ApplicationController
 
     if @origin == @destination
       # if it is a round trip we want to skip past the first stop
-      @origin.origins.includes(:destination).each do |d|
+      @origin.end_points.each do |d|
         traverse.call(d.destination, d.distance, [@origin])
       end
     else
@@ -109,7 +109,7 @@ class RoutesController < ApplicationController
       # add the previous node to the visited set
       visited.add node
       sma = nil
-      node.origins.includes(:destination).each do |org|
+      node.end_points.each do |org|
         d = org.destination
         # if any of these sums is less than thier recorded sums, then we replace the value with the sum
         summed = org.distance + dist_from_o
@@ -156,7 +156,7 @@ class RoutesController < ApplicationController
 
     current.origin.includes(:destination).each do |org|
       next if visited.include? org.destination
-      
+
       # current = org.destination
       # while current != destination
 
