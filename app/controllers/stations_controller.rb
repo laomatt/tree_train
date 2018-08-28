@@ -117,7 +117,7 @@ class StationsController < ApplicationController
       visited << station
 
       if type_of_query == 'max_dist'
-        station.origins.includes(:destination).each do |dest|
+        station.end_points.each do |dest|
           traverse.call(
             dest.destination,
             dist.clone+dest.distance,
